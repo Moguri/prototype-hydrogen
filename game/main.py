@@ -13,6 +13,12 @@ p3d.load_prc_file_data(
     'framebuffer-srgb true\n'
 )
 
+
+# Load config files
+p3d.load_prc_file('config/game.prc')
+if os.path.exists('config/user.prc'):
+    p3d.load_prc_file('config/user.prc')
+
 class GameApp(ShowBase):
     def __init__(self):
         ShowBase.__init__(self)
