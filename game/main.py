@@ -29,7 +29,9 @@ class GameApp(ShowBase):
 
         self.inputmapper = InputMapper('input.conf')
 
-        self.current_state = gamestates.CombatState()
+        self.current_state = None
+        self.change_state(gamestates.CombatState)
+
         def run_state(task):
             if self.current_state:
                 self.current_state.run(globalClock.get_dt())
