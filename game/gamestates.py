@@ -31,12 +31,16 @@ class GameUI:
 class GameState(DirectObject):
     def __init__(self, ui=None):
         self.ui = ui() if ui is not None else None
+        self.root_node = p3d.NodePath('State Root')
+        self.root_node.reparent_to(base.render)
 
     def cleanup(self):
         self.ignoreAll()
         if self.ui:
             self.ui.cleanup()
             self.ui = None
+        self.root_node.remove_node()
+        self.root_node = None
 
     def run(self, dt):
         pass
