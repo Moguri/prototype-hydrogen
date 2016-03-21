@@ -54,12 +54,12 @@ class CombatUI(GameUI):
         self._pcs = OrderedDict()
         self._ecs = OrderedDict()
 
-    def _create_pc_frame(self):
+    def _create_pc_frame(self, n):
         frame = dgui.DirectFrame(
             parent=self.root_right,
             frameColor=(0.8, 0.8, 0.8, 0.5),
             frameSize=(-0.4, 0.4, -0.075, 0.075),
-            pos=(-0.45 - 0.05 * len(self._pcs), 0, -0.55 - 0.175 * len(self._pcs))
+            pos=(-0.45 - 0.05 * n, 0, -0.55 - 0.175 * n)
         )
 
         frame.label = dgui.DirectLabel(
@@ -70,7 +70,6 @@ class CombatUI(GameUI):
             frameColor=(0, 0, 0, 0),
             pos=(-0.375, 0, 0.04)
         )
-
 
         frame.hpbar = dgui.DirectWaitBar(
             parent=frame,
@@ -102,19 +101,77 @@ class CombatUI(GameUI):
 
         return frame
 
-    def _add_player_combatant(self, combatant):
-        if combatant in self._pcs:
-            self._pcs[combatant].destroy()
-            del self._pcs[combatant]
+    def _create_ec_frame(self, n, empty=False):
+        col = n // 4
+        row = n % 4
+        frame = dgui.DirectFrame(
+            parent=self.root_left,
+            frameColor=(0.8, 0.8, 0.8, 0.5),
+            frameSize=(-0.2, 0.2, -0.08, 0.08),
+            pos=(0.215 + 0.405 * col, 0, -0.4 - 0.167 * row)
+        )
 
-        self._pcs[combatant] = self._create_pc_frame()
+        if not empty:
+            frame.label = dgui.DirectLabel(
+                parent=frame,
+                text='',
+                text_scale=(0.035, 0.035),
+                text_align=p3d.TextNode.ALeft,
+                frameColor=(0, 0, 0, 0),
+                pos=(-0.175, 0, 0.025)
+            )
 
-    def update_combatants(self, player_combatants):
+            frame.hpbar = dgui.DirectWaitBar(
+                parent=frame,
+                value=100,
+                text='0/0',
+                text_scale=(0.025, 0.025),
+                text_pos=(0, -0.006),
+                text_fg=(1, 1, 1, 1),
+                text_shadow=(0, 0, 0, 0.8),
+                frameColor=(0, 0, 0, 1),
+                frameSize=(-0.15, 0.15, -0.01, 0.01),
+            )
+
+            frame.rolelabel = dgui.DirectLabel(
+                parent=frame,
+                text='',
+                text_scale=(0.025, 0.025),
+                text_align=p3d.TextNode.ALeft,
+                pos=(-0.15, 0, -0.05)
+            )
+
+            frame.attacklabel = dgui.DirectLabel(
+                parent=frame,
+                text='',
+                text_scale=(0.025, 0.025),
+                text_align=p3d.TextNode.ALeft,
+                pos=(0.05, 0, -0.05),
+            )
+
+        return frame
+
+    def setup_combatants(self, player_combatants, enemy_combatants):
         for combatant in player_combatants:
-            if combatant not in self._pcs:
-                self._add_player_combatant(combatant)
+            self._pcs[combatant] = self._create_pc_frame(len(self._pcs))
 
+        for combatant in enemy_combatants:
+            self._ecs[combatant] = self._create_ec_frame(len(self._ecs))
+
+        for i in range(len(self._ecs), 12):
+            self._create_ec_frame(i, empty=True)
+
+    def update_combatants(self, player_combatants, enemy_combatants):
+        for combatant in player_combatants:
             ui = self._pcs[combatant]
+            ui.label['text'] = combatant.name
+            ui.hpbar['value'] = int(combatant.hp_current)
+            ui.hpbar['text'] = '{}/{}'.format(int(combatant.hp_current), combatant.hp_max)
+            ui.rolelabel['text'] = 'ROLE: {}'.format(combatant.role)
+            ui.attacklabel['text'] = 'ATK: {}'.format(combatant.attack)
+
+        for combatant in enemy_combatants:
+            ui = self._ecs[combatant]
             ui.label['text'] = combatant.name
             ui.hpbar['value'] = int(combatant.hp_current)
             ui.hpbar['text'] = '{}/{}'.format(int(combatant.hp_current), combatant.hp_max)
@@ -141,11 +198,14 @@ class CombatState(GameState):
             Combatant("Mech Three"),
         ]
 
+        self.enemy_combatants = [Combatant('Enemy {}'.format(i + 1)) for i in range(12)]
+
+        self.ui.setup_combatants(self.player_combatants, self.enemy_combatants)
 
     def run(self, dt):
         for pc in self.player_combatants:
             pc.hp_current -= 5 * dt
             if pc.hp_current < 0:
                 pc.hp_current = 0
-        self.ui.update_combatants(self.player_combatants)
+        self.ui.update_combatants(self.player_combatants, self.enemy_combatants)
 
