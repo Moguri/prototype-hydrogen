@@ -61,11 +61,12 @@ class CombatUI(GameUI):
         frame.label = dgui.DirectLabel(
             parent=frame,
             text='',
-            text_scale=(0.03, 0.03),
+            text_scale=(0.04, 0.04),
             text_align=p3d.TextNode.ALeft,
             frameColor=(0, 0, 0, 0),
             pos=(-0.375, 0, 0.04)
         )
+
 
         frame.hpbar = dgui.DirectWaitBar(
             parent=frame,
@@ -77,6 +78,22 @@ class CombatUI(GameUI):
             text_shadow=(0, 0, 0, 0.8),
             frameColor=(0, 0, 0, 1),
             frameSize=(-0.35, 0.35, -0.015, 0.015),
+        )
+
+        frame.rolelabel = dgui.DirectLabel(
+            parent=frame,
+            text='',
+            text_scale=(0.03, 0.03),
+            text_align=p3d.TextNode.ALeft,
+            pos=(-0.3, 0, -0.05)
+        )
+
+        frame.attacklabel = dgui.DirectLabel(
+            parent=frame,
+            text='',
+            text_scale=(0.03, 0.03),
+            text_align=p3d.TextNode.ALeft,
+            pos=(0, 0, -0.05),
         )
 
         return frame
@@ -97,12 +114,15 @@ class CombatUI(GameUI):
             ui.label['text'] = combatant.name
             ui.hpbar['value'] = int(combatant.hp_current)
             ui.hpbar['text'] = '{}/{}'.format(int(combatant.hp_current), combatant.hp_max)
-
+            ui.rolelabel['text'] = 'ROLE: {}'.format(combatant.role)
+            ui.attacklabel['text'] = 'ATK: {}'.format(combatant.attack)
 
 
 class Combatant:
     def __init__(self, name):
         self.name = name
+        self.role = 'Single'
+        self.attack = 10
         self.hp_max = 100
         self.hp_current = 100
 
