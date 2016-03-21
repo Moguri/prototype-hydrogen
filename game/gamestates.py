@@ -102,13 +102,14 @@ class CombatUI(GameUI):
         return frame
 
     def _create_ec_frame(self, n, empty=False):
-        col = n // 4
-        row = n % 4
+        frame_per_column = 12
+        col = n // frame_per_column
+        row = n % frame_per_column
         frame = dgui.DirectFrame(
             parent=self.root_left,
             frameColor=(0.8, 0.8, 0.8, 0.5),
             frameSize=(-0.2, 0.2, -0.08, 0.08),
-            pos=(0.215 + 0.405 * col, 0, -0.4 - 0.167 * row)
+            pos=(0.215 + 0.405 * col, 0, -1.075 + 0.167 * frame_per_column - 0.167 * row)
         )
 
         if not empty:
