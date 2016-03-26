@@ -35,7 +35,6 @@ class Character:
         self.name = 'default'
         self.health = 3
         self.attack = 3
-        self.target = None
         self.roles = []
 
     @classmethod

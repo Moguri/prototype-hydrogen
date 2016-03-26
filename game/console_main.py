@@ -24,7 +24,7 @@ def display_player(mechs):
         line = ''.join([mech.name + ' ' * (19-len(mech.name)) + '|' for mech in mechs])
         line = '|Name              |' + line
         print(line)
-        line = ''.join(['{: <19}|'.format(mech.health) for mech in mechs])
+        line = ''.join(['{: <19}|'.format(mech.hp_current) for mech in mechs])
         line = '|Health            |' + line
         print(line)
         line = ''.join(['{: <19}|'.format(mech.attack) for mech in mechs])
@@ -75,7 +75,7 @@ def main():
     while not combat_sys.is_over:
         clear()
         display_player(combat_sys.enemy_list)
-        display_player(mechs)
+        display_player(combat_sys.player_list)
 
         for i, formation in enumerate(formations):
             print(i, ', '.join(formation))
@@ -87,20 +87,20 @@ def main():
         except:
             continue
 
-        for mech, role in zip(mechs, formation):
-            if role == 'Single' and mech.health > 0:
+        for mech, role in zip(combat_sys.player_list, formation):
+            if role == 'Single' and mech.hp_current > 0:
                 pick_target(combat_sys, mech)
                 print(mech.target)
 
         clear()
-        results = combat_sys.do_round(mechs, formation)
+        results = combat_sys.do_round(formation)
         for result in results:
             print(result)
         input('Press enter to continue')
 
     clear()
     display_player(combat_sys.enemy_list)
-    display_player(mechs)
+    display_player(combat_sys.player_list)
 
 
 main()

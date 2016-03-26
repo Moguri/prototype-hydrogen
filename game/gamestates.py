@@ -1,4 +1,5 @@
 from collections import OrderedDict
+import random
 
 from direct.showbase.DirectObject import DirectObject
 import direct.gui.DirectGui as dgui
@@ -180,33 +181,39 @@ class CombatUI(GameUI):
             ui.attacklabel['text'] = 'ATK: {}'.format(combatant.attack)
 
 
-class Combatant:
-    def __init__(self, name):
-        self.name = name
-        self.role = 'Single'
-        self.attack = 10
-        self.hp_max = 100
-        self.hp_current = 100
+from character import Character
+import combat
 
 
 class CombatState(GameState):
     def __init__(self):
         super().__init__(CombatUI)
+        self.accum = 0
 
-        self.player_combatants = [
-            Combatant("Mech One"),
-            Combatant("Mech Two"),
-            Combatant("Mech Three"),
-        ]
+        names = ('Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon')
+        self.player_characters = [Character.from_random() for i in range(3)]
+        for i, character in enumerate(self.player_characters):
+            character.name = names[i%len(names)]
 
-        self.enemy_combatants = [Combatant('Enemy {}'.format(i + 1)) for i in range(12)]
+        self.formations = []
+        for i in self.player_characters[0].roles:
+            for j in self.player_characters[1].roles:
+                for k in self.player_characters[2].roles:
+                    self.formations.append((i, j, k))
 
-        self.ui.setup_combatants(self.player_combatants, self.enemy_combatants)
+        self.combat_sys = combat.System(self.player_characters)
+        self.ui.setup_combatants(self.combat_sys.player_list, self.combat_sys.enemy_list)
 
     def run(self, dt):
-        for pc in self.player_combatants:
-            pc.hp_current -= 5 * dt
-            if pc.hp_current < 0:
-                pc.hp_current = 0
-        self.ui.update_combatants(self.player_combatants, self.enemy_combatants)
-
+        combat_speed = 3
+        self.accum += dt
+        while self.accum >= combat_speed:
+            if not self.combat_sys.is_over:
+                formation = random.choice(self.formations)
+                results = self.combat_sys.do_round(formation)
+                for result in results:
+                    print(result)
+            else:
+                print('Combat is over')
+            self.accum -= combat_speed;
+        self.ui.update_combatants(self.combat_sys.player_list, self.combat_sys.enemy_list)
