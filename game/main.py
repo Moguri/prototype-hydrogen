@@ -2,6 +2,8 @@
 import os
 import sys
 
+os.chdir(os.path.dirname(__file__))
+
 from direct.showbase.ShowBase import ShowBase
 import panda3d.core as p3d
 import blenderpanda
@@ -20,6 +22,7 @@ p3d.load_prc_file_data(
 p3d.load_prc_file('config/game.prc')
 if os.path.exists('config/user.prc'):
     p3d.load_prc_file('config/user.prc')
+
 
 class GameApp(ShowBase):
     def __init__(self):
