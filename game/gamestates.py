@@ -210,6 +210,8 @@ class CombatState(GameState):
         while self.accum >= combat_speed:
             if not self.combat_sys.is_over:
                 formation = random.choice(self.formations)
+                for player, role in zip(self.combat_sys.player_list, formation):
+                    player.role = role
                 results = self.combat_sys.do_round(formation)
                 for result in results:
                     print(result)

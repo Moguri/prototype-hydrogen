@@ -84,6 +84,8 @@ class System:
 
     def do_round(self, formation):
         enemy_role_list = ((enemy, 'Single') for enemy in self.enemy_list)
+        for enemy, role in enemy_role_list:
+            enemy.role = role
 
         actions = []
         remaining_enemies = [enemy for enemy in self.enemy_list if enemy.hp_current > 0]
