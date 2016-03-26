@@ -1,0 +1,19 @@
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'game'))
+
+class hydrogen(p3d):
+    require('morepy')
+    includeExtensions(
+        textExtensions=[
+            'conf',
+        ],
+        suppressWarningForExtensions=[
+            'md',
+        ]
+    )
+    module('configparser')
+    file('.pman', extract=True, required=True)
+    dir('game')
+    mainModule('main')
+
