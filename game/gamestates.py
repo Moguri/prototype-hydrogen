@@ -216,6 +216,13 @@ import combat
 class CombatState(GameState):
     def __init__(self):
         super().__init__(CombatUI)
+
+        model = loader.loadModel('arena.bam')
+        camera = model.find('Camera')
+        base.cam.set_pos(camera.get_pos())
+        base.cam.look_at(p3d.LVector3(0, 0, 0))
+        model.reparent_to(self.root_node)
+
         self.accum = 0
 
         names = ('Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon')

@@ -33,6 +33,9 @@ class GameApp(ShowBase):
     def __init__(self):
         ShowBase.__init__(self)
         blenderpanda.init(self)
+
+        base.disableMouse()
+
         self.accept('quit', sys.exit)
 
         self.inputmapper = InputMapper('input.conf')
