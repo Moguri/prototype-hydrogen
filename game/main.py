@@ -4,12 +4,14 @@ import sys
 
 os.chdir(os.path.dirname(__file__))
 
+
 from direct.showbase.ShowBase import ShowBase
 import panda3d.core as p3d
 import blenderpanda
 from bamboo.inputmapper import InputMapper
 
 import gamestates
+
 
 p3d.load_prc_file_data(
     '',
@@ -21,7 +23,10 @@ p3d.load_prc_file_data(
 # Load config files
 p3d.load_prc_file('config/game.prc')
 if os.path.exists('config/user.prc'):
+    print("Loading user.prc")
     p3d.load_prc_file('config/user.prc')
+else:
+    print("Did not find a user config")
 
 
 class GameApp(ShowBase):

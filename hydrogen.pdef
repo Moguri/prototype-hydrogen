@@ -12,8 +12,9 @@ class hydrogen(p3d):
             'md',
         ]
     )
-    module('configparser')
-    file('.pman', extract=True, required=True)
+    file('.pman', required=True)
+    file('game/config/*', newDir='config', extract=True, required=True)
+    exclude('config')
     dir('game')
     mainModule('main')
 
