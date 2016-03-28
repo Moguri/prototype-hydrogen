@@ -55,6 +55,8 @@ class CombatUI(GameUI):
         self._pcs = OrderedDict()
         self._ecs = OrderedDict()
 
+        self._formation_frame = None
+
     def _create_pc_frame(self, n):
         frame = dgui.DirectFrame(
             parent=self.root_right,
@@ -163,6 +165,32 @@ class CombatUI(GameUI):
         for i in range(len(self._ecs), 12):
             self._create_ec_frame(i, empty=True)
 
+    def setup_formations(self, formations, select_formation_cb):
+        if self._formation_frame:
+            self._formation_frame.destroy()
+            self._formation_frame = None
+
+        self._formation_frame = dgui.DirectFrame(
+            parent=self.root,
+            frameColor=(0.8, 0.8, 0.8, 0.5),
+            frameSize=(-0.25, 0.25, -0.3, 0.3),
+            pos=(0, 0, -0.7)
+        )
+
+        for idx, formation in enumerate(formations):
+            dgui.DirectButton(
+                parent=self._formation_frame,
+                command=select_formation_cb,
+                extraArgs=[idx],
+                text='{}. {} | {} | {}'.format(idx, *formation),
+                text_scale=(0.03, 0.03),
+                text_pos=(0, -0.01),
+                relief=dgui.DGG.FLAT,
+                frameColor=(0.3, 0.3, 0.3, 0.5),
+                frameSize=(-0.25, 0.25, -0.04, 0.04),
+                pos=(0, 0, 0.2 - 0.105 * idx)
+            )
+
     def update_combatants(self, player_combatants, enemy_combatants):
         for combatant in player_combatants:
             ui = self._pcs[combatant]
@@ -196,6 +224,7 @@ class CombatState(GameState):
             character.name = names[i%len(names)]
 
         self.formations = []
+        self.formation_idx = 0
         for i in self.player_characters[0].roles:
             for j in self.player_characters[1].roles:
                 for k in self.player_characters[2].roles:
@@ -204,12 +233,17 @@ class CombatState(GameState):
         self.combat_sys = combat.System(self.player_characters)
         self.ui.setup_combatants(self.combat_sys.player_list, self.combat_sys.enemy_list)
 
+        def select_formation(idx):
+            print("Change formation to {}".format(self.formations[idx]))
+            self.formation_idx = idx
+        self.ui.setup_formations(self.formations, select_formation)
+
     def run(self, dt):
         combat_speed = 3
         self.accum += dt
         while self.accum >= combat_speed:
             if not self.combat_sys.is_over:
-                formation = random.choice(self.formations)
+                formation = self.formations[self.formation_idx]
                 for player, role in zip(self.combat_sys.player_list, formation):
                     player.role = role
                 results = self.combat_sys.do_round(formation)
