@@ -234,11 +234,11 @@ class CombatState(GameState):
     def __init__(self):
         super().__init__(CombatUI)
 
-        model = loader.loadModel('arena.bam')
-        camera = model.find('Camera')
+        scene = loader.loadModel('arena.bam')
+        camera = scene.find('Camera')
         base.cam.set_pos(camera.get_pos())
         base.cam.look_at(p3d.LVector3(0, 0, 0))
-        model.reparent_to(self.root_node)
+        scene.reparent_to(self.root_node)
 
         self.selected_formation = None
         self.selected_targets = False
@@ -260,6 +260,30 @@ class CombatState(GameState):
 
         self.combat_sys = combat.System(self.player_characters)
         self.ui.setup_combatants(self.combat_sys.player_list, self.combat_sys.enemy_list)
+
+        # Place enemy models
+        enemy_models = {
+            'heavy' : loader.loadModel('heavy.bam'),
+            'skirmisher' : loader.loadModel('skirmisher.bam'),
+            'swarmer' : loader.loadModel('swarmer.bam'),
+            'tank' : loader.loadModel('tank.bam'),
+        }
+        enemy_node = scene.attachNewNode('enemies')
+        for i, enemy in enumerate(self.combat_sys.enemy_list):
+            x = i % 2
+            y = i // 2
+            key = enemy.name.split(' ')[1].lower()
+            model = enemy_node.attachNewNode(enemy.name)
+            model.set_pos(x * 4 - 6, y * -4 + 5, 0)
+            enemy_models[key].instanceTo(model)
+
+        # Place player models
+        player_node = scene.attachNewNode('players')
+        player_model = loader.loadModel('player.bam')
+        for i, player in enumerate(self.combat_sys.player_list):
+            model = player_node.attachNewNode(player.name)
+            model.set_pos(5, i * -4 + 4, 0)
+            player_model.instanceTo(model)
 
         def select_item(idx):
             print("Change formation to {}".format(self.formations[idx]))
@@ -305,7 +329,18 @@ class CombatState(GameState):
                 self.selected_formation = None
                 for player in self.combat_sys.player_list:
                     player.target = None
+                    np = self.root_node.find('**/players/' + player.name)
+                    if player.hp_current > 0:
+                        np.show()
+                    else:
+                        np.hide()
                 for result in results:
                     print(result)
+                for enemy in self.combat_sys.enemy_list:
+                    np = self.root_node.find('**/enemies/'+enemy.name)
+                    if enemy.hp_current > 0:
+                        np.show()
+                    else:
+                        np.hide()
 
         self.ui.update_combatants(self.combat_sys.player_list, self.combat_sys.enemy_list)
