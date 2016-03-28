@@ -15,7 +15,7 @@ import gamestates
 
 p3d.load_prc_file_data(
     '',
-    'model-path {}\n'.format(os.path.join(os.path.dirname(__file__), 'assets')) + \
+    'model-path {}\n'.format(p3d.Filename.fromOsSpecific(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets'))) + \
     'framebuffer-srgb true\n'
 )
 
