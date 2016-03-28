@@ -223,7 +223,8 @@ class CombatState(GameState):
         base.cam.look_at(p3d.LVector3(0, 0, 0))
         model.reparent_to(self.root_node)
 
-        self.accum = 0
+        self.selected_formation = None
+        self.selected_targets = False
 
         names = ('Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon')
         self.player_characters = [Character.from_random() for i in range(3)]
@@ -231,7 +232,7 @@ class CombatState(GameState):
             character.name = names[i%len(names)]
 
         self.formations = []
-        self.formation_idx = 0
+        self.formation_idx = -1
         for i in self.player_characters[0].roles:
             for j in self.player_characters[1].roles:
                 for k in self.player_characters[2].roles:
@@ -241,7 +242,6 @@ class CombatState(GameState):
         self.ui.setup_combatants(self.combat_sys.player_list, self.combat_sys.enemy_list)
 
         def select_formation(idx):
-            print("Change formation to {}".format(self.formations[idx]))
             self.formation_idx = idx
         self.ui.setup_formations(self.formations, select_formation)
         self.accept('selection1', select_formation, [0])
@@ -254,17 +254,34 @@ class CombatState(GameState):
         self.accept('selection8', select_formation, [7])
 
     def run(self, dt):
-        combat_speed = 3
-        self.accum += dt
-        while self.accum >= combat_speed:
-            if not self.combat_sys.is_over:
-                formation = self.formations[self.formation_idx]
-                for player, role in zip(self.combat_sys.player_list, formation):
-                    player.role = role
-                results = self.combat_sys.do_round(formation)
+        current_player = None
+        for player in self.combat_sys.player_list:
+            if player.role == 'Single' and player.target == None and player.hp_current > 0:
+                current_player = player
+                break
+        else:
+            self.selected_targets = True
+
+        if self.combat_sys.is_over:
+                print('Combat is over')
+        elif self.formation_idx != -1 and self.selected_formation == None:
+            self.selected_formation = self.formations[self.formation_idx]
+            for player, role in zip(self.combat_sys.player_list, self.selected_formation):
+                player.role = role
+            self.formation_idx = -1
+            self.selected_targets = False
+        elif self.selected_formation:
+            if self.formation_idx != -1 and not self.selected_targets:
+                current_player.target = self.combat_sys.enemy_list[self.formation_idx]
+                self.formation_idx = -1
+            elif not self.selected_targets and self.formation_idx == -1:
+                print('Select target for {}'.format(current_player.name))
+            elif self.selected_targets:
+                results = self.combat_sys.do_round(self.selected_formation)
+                self.selected_formation = None
+                for player in self.combat_sys.player_list:
+                    player.target = None
                 for result in results:
                     print(result)
-            else:
-                print('Combat is over')
-            self.accum -= combat_speed;
+
         self.ui.update_combatants(self.combat_sys.player_list, self.combat_sys.enemy_list)

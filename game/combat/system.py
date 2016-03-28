@@ -78,7 +78,7 @@ class System:
             self.enemy_list.append(Character.from_template(choice))
 
         for i, enemy in enumerate(self.enemy_list):
-            enemy.name = '({}) {}'.format(i, enemy.name)
+            enemy.name = '({}) {}'.format(i+1, enemy.name)
 
         self.enemy_list = [Combatant(e.name, e) for e in self.enemy_list]
 
