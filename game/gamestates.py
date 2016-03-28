@@ -285,21 +285,19 @@ class CombatState(GameState):
             model.set_pos(5, i * -4 + 4, 0)
             player_model.instanceTo(model)
 
-        def select_item(idx):
-            print("Change formation to {}".format(self.formations[idx]))
-            self.formation_idx = idx
-        self.ui.setup_selections('Select Formation', self.formation_items, select_item)
-        #self.ui.setup_selections('Select Target for Gamma', [i.name for i in self.combat_sys.enemy_list], select_item)
-        self.accept('selection1', select_item, [0])
-        self.accept('selection2', select_item, [1])
-        self.accept('selection3', select_item, [2])
-        self.accept('selection4', select_item, [3])
-        self.accept('selection5', select_item, [4])
-        self.accept('selection6', select_item, [5])
-        self.accept('selection7', select_item, [6])
-        self.accept('selection8', select_item, [7])
-        self.accept('selection9', select_item, [8])
-        self.accept('selection0', select_item, [9])
+        self.accept('selection1', self.select_item, [0])
+        self.accept('selection2', self.select_item, [1])
+        self.accept('selection3', self.select_item, [2])
+        self.accept('selection4', self.select_item, [3])
+        self.accept('selection5', self.select_item, [4])
+        self.accept('selection6', self.select_item, [5])
+        self.accept('selection7', self.select_item, [6])
+        self.accept('selection8', self.select_item, [7])
+        self.accept('selection9', self.select_item, [8])
+        self.accept('selection0', self.select_item, [9])
+
+    def select_item(self, idx):
+        self.formation_idx = idx
 
     def run(self, dt):
         current_player = None
@@ -323,7 +321,12 @@ class CombatState(GameState):
                 current_player.target = self.combat_sys.enemy_list[self.formation_idx]
                 self.formation_idx = -1
             elif not self.selected_targets and self.formation_idx == -1:
-                print('Select target for {}'.format(current_player.name))
+                #print('Select target for {}'.format(current_player.name))
+                self.ui.setup_selections(
+                    'Select Target for {}'.format(current_player.name),
+                    [i.name for i in self.combat_sys.enemy_list],
+                    self.select_item
+                )
             elif self.selected_targets:
                 results = self.combat_sys.do_round(self.selected_formation)
                 self.selected_formation = None
@@ -342,5 +345,7 @@ class CombatState(GameState):
                         np.show()
                     else:
                         np.hide()
+        else:
+            self.ui.setup_selections('Select Formation', self.formation_items, self.select_item)
 
         self.ui.update_combatants(self.combat_sys.player_list, self.combat_sys.enemy_list)
