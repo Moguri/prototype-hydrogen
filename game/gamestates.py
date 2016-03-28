@@ -167,7 +167,7 @@ class CombatUI(GameUI):
         for combatant in player_combatants:
             ui = self._pcs[combatant]
             ui.label['text'] = combatant.name
-            ui.hpbar['value'] = int(combatant.hp_current)
+            ui.hpbar['value'] = int(combatant.hp_current / combatant.hp_max * 100)
             ui.hpbar['text'] = '{}/{}'.format(int(combatant.hp_current), combatant.hp_max)
             ui.rolelabel['text'] = 'ROLE: {}'.format(combatant.role)
             ui.attacklabel['text'] = 'ATK: {}'.format(combatant.attack)
@@ -175,7 +175,7 @@ class CombatUI(GameUI):
         for combatant in enemy_combatants:
             ui = self._ecs[combatant]
             ui.label['text'] = combatant.name
-            ui.hpbar['value'] = int(combatant.hp_current)
+            ui.hpbar['value'] = int(combatant.hp_current / combatant.hp_max * 100)
             ui.hpbar['text'] = '{}/{}'.format(int(combatant.hp_current), combatant.hp_max)
             ui.rolelabel['text'] = 'ROLE: {}'.format(combatant.role)
             ui.attacklabel['text'] = 'ATK: {}'.format(combatant.attack)
