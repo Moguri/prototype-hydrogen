@@ -166,7 +166,7 @@ class CombatUI(GameUI):
         for i in range(len(self._ecs), 12):
             self._create_ec_frame(i, empty=True)
 
-    def setup_selections(self, selections, select_cb):
+    def setup_selections(self, title, selections, select_cb):
         if self._selection_frame:
             self._selection_frame.destroy()
             self._selection_frame = None
@@ -176,12 +176,21 @@ class CombatUI(GameUI):
             self._selection_items = []
 
         num_items = len(selections)
+        frame_size = num_items / 10.0 + 0.06
 
         self._selection_frame = dgui.DirectFrame(
             parent=self.root,
             frameColor=(0.8, 0.8, 0.8, 0.5),
-            frameSize=(-0.25, 0.25, 0.0, num_items / 10.0 + 0.06),
+            frameSize=(-0.25, 0.25, 0.0, frame_size),
             pos=(0, 0, -1.0)
+        )
+
+        dgui.DirectLabel(
+            parent=self._selection_frame,
+            text=title,
+            text_scale=(0.05, 0.05),
+            frameColor=(0, 0, 0, 0),
+            pos=(0, 0, frame_size)
         )
 
         for idx, selection in enumerate(selections):
@@ -255,8 +264,8 @@ class CombatState(GameState):
         def select_item(idx):
             print("Change formation to {}".format(self.formations[idx]))
             self.formation_idx = idx
-        self.ui.setup_selections(self.formation_items, select_item)
-        #self.ui.setup_selections([i.name for i in self.combat_sys.enemy_list], select_item)
+        self.ui.setup_selections('Select Formation', self.formation_items, select_item)
+        #self.ui.setup_selections('Select Target for Gamma', [i.name for i in self.combat_sys.enemy_list], select_item)
         self.accept('selection1', select_item, [0])
         self.accept('selection2', select_item, [1])
         self.accept('selection3', select_item, [2])
