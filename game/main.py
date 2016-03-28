@@ -38,7 +38,7 @@ class GameApp(ShowBase):
 
         self.accept('quit', sys.exit)
 
-        self.inputmapper = InputMapper('input.conf')
+        self.inputmapper = InputMapper('config/input.conf')
 
         self.current_state = None
         self.change_state(gamestates.CombatState)
