@@ -88,3 +88,6 @@ user.prc
 
 # Vim swp files
 *.swp
+
+# Built assets
+game/assets
