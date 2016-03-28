@@ -55,7 +55,8 @@ class CombatUI(GameUI):
         self._pcs = OrderedDict()
         self._ecs = OrderedDict()
 
-        self._formation_frame = None
+        self._selection_frame = None
+        self._selection_items = []
 
     def _create_pc_frame(self, n):
         frame = dgui.DirectFrame(
@@ -165,31 +166,38 @@ class CombatUI(GameUI):
         for i in range(len(self._ecs), 12):
             self._create_ec_frame(i, empty=True)
 
-    def setup_formations(self, formations, select_formation_cb):
-        if self._formation_frame:
-            self._formation_frame.destroy()
-            self._formation_frame = None
+    def setup_selections(self, selections, select_cb):
+        if self._selection_frame:
+            self._selection_frame.destroy()
+            self._selection_frame = None
 
-        self._formation_frame = dgui.DirectFrame(
+            for i in self._selection_items:
+                i.destroy()
+            self._selection_items = []
+
+        num_items = len(selections)
+
+        self._selection_frame = dgui.DirectFrame(
             parent=self.root,
             frameColor=(0.8, 0.8, 0.8, 0.5),
-            frameSize=(-0.25, 0.25, -0.4, 0.4),
-            pos=(0, 0, -0.6)
+            frameSize=(-0.25, 0.25, 0.0, num_items / 10.0 + 0.06),
+            pos=(0, 0, -1.0)
         )
 
-        for idx, formation in enumerate(formations):
-            dgui.DirectButton(
-                parent=self._formation_frame,
-                command=select_formation_cb,
+        for idx, selection in enumerate(selections):
+            btn = dgui.DirectButton(
+                parent=self.root,
+                command=select_cb,
                 extraArgs=[idx],
-                text='{}. {} | {} | {}'.format(idx + 1, *formation),
+                text=selection,
                 text_scale=(0.03, 0.03),
                 text_pos=(0, -0.01),
                 relief=dgui.DGG.FLAT,
                 frameColor=(0.3, 0.3, 0.3, 0.5),
                 frameSize=(-0.25, 0.25, -0.04, 0.04),
-                pos=(0, 0, 0.35 - 0.1 * idx)
+                pos=(0, 0, (0.1 * num_items - 1.02) - 0.1 * idx)
             )
+            self._selection_items.append(btn)
 
     def update_combatants(self, player_combatants, enemy_combatants):
         for combatant in player_combatants:
@@ -237,21 +245,28 @@ class CombatState(GameState):
             for j in self.player_characters[1].roles:
                 for k in self.player_characters[2].roles:
                     self.formations.append((i, j, k))
+        self.formation_items = [
+            '({}) {} | {} | {}'.format(idx + 1, *items) for idx, items in enumerate(self.formations)
+        ]
 
         self.combat_sys = combat.System(self.player_characters)
         self.ui.setup_combatants(self.combat_sys.player_list, self.combat_sys.enemy_list)
 
-        def select_formation(idx):
+        def select_item(idx):
+            print("Change formation to {}".format(self.formations[idx]))
             self.formation_idx = idx
-        self.ui.setup_formations(self.formations, select_formation)
-        self.accept('selection1', select_formation, [0])
-        self.accept('selection2', select_formation, [1])
-        self.accept('selection3', select_formation, [2])
-        self.accept('selection4', select_formation, [3])
-        self.accept('selection5', select_formation, [4])
-        self.accept('selection6', select_formation, [5])
-        self.accept('selection7', select_formation, [6])
-        self.accept('selection8', select_formation, [7])
+        self.ui.setup_selections(self.formation_items, select_item)
+        #self.ui.setup_selections([i.name for i in self.combat_sys.enemy_list], select_item)
+        self.accept('selection1', select_item, [0])
+        self.accept('selection2', select_item, [1])
+        self.accept('selection3', select_item, [2])
+        self.accept('selection4', select_item, [3])
+        self.accept('selection5', select_item, [4])
+        self.accept('selection6', select_item, [5])
+        self.accept('selection7', select_item, [6])
+        self.accept('selection8', select_item, [7])
+        self.accept('selection9', select_item, [8])
+        self.accept('selection0', select_item, [9])
 
     def run(self, dt):
         current_player = None
