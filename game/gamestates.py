@@ -244,11 +244,14 @@ class CombatState(GameState):
             print("Change formation to {}".format(self.formations[idx]))
             self.formation_idx = idx
         self.ui.setup_formations(self.formations, select_formation)
-        self.accept('formation1', select_formation, [0])
-        self.accept('formation2', select_formation, [1])
-        self.accept('formation3', select_formation, [2])
-        self.accept('formation4', select_formation, [3])
-        self.accept('formation5', select_formation, [4])
+        self.accept('selection1', select_formation, [0])
+        self.accept('selection2', select_formation, [1])
+        self.accept('selection3', select_formation, [2])
+        self.accept('selection4', select_formation, [3])
+        self.accept('selection5', select_formation, [4])
+        self.accept('selection6', select_formation, [5])
+        self.accept('selection7', select_formation, [6])
+        self.accept('selection8', select_formation, [7])
 
     def run(self, dt):
         combat_speed = 3
