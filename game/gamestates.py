@@ -173,8 +173,8 @@ class CombatUI(GameUI):
         self._formation_frame = dgui.DirectFrame(
             parent=self.root,
             frameColor=(0.8, 0.8, 0.8, 0.5),
-            frameSize=(-0.25, 0.25, -0.3, 0.3),
-            pos=(0, 0, -0.7)
+            frameSize=(-0.25, 0.25, -0.4, 0.4),
+            pos=(0, 0, -0.6)
         )
 
         for idx, formation in enumerate(formations):
@@ -188,7 +188,7 @@ class CombatUI(GameUI):
                 relief=dgui.DGG.FLAT,
                 frameColor=(0.3, 0.3, 0.3, 0.5),
                 frameSize=(-0.25, 0.25, -0.04, 0.04),
-                pos=(0, 0, 0.2 - 0.105 * idx)
+                pos=(0, 0, 0.35 - 0.1 * idx)
             )
 
     def update_combatants(self, player_combatants, enemy_combatants):
