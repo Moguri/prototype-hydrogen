@@ -182,7 +182,7 @@ class CombatUI(GameUI):
                 parent=self._formation_frame,
                 command=select_formation_cb,
                 extraArgs=[idx],
-                text='{}. {} | {} | {}'.format(idx, *formation),
+                text='{}. {} | {} | {}'.format(idx + 1, *formation),
                 text_scale=(0.03, 0.03),
                 text_pos=(0, -0.01),
                 relief=dgui.DGG.FLAT,
