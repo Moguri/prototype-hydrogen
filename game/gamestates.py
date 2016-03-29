@@ -87,20 +87,12 @@ class CombatUI(GameUI):
             frameSize=(-0.35, 0.35, -0.015, 0.015),
         )
 
-        frame.rolelabel = dgui.DirectLabel(
-            parent=frame,
-            text='',
-            text_scale=(0.03, 0.03),
-            text_align=p3d.TextNode.ALeft,
-            pos=(-0.3, 0, -0.05)
-        )
-
         frame.attacklabel = dgui.DirectLabel(
             parent=frame,
             text='',
             text_scale=(0.03, 0.03),
             text_align=p3d.TextNode.ALeft,
-            pos=(0, 0, -0.05),
+            pos=(-0.375, 0, -0.05),
         )
 
         return frame
@@ -138,20 +130,13 @@ class CombatUI(GameUI):
                 frameSize=(-0.15, 0.15, -0.01, 0.01),
             )
 
-            frame.rolelabel = dgui.DirectLabel(
-                parent=frame,
-                text='',
-                text_scale=(0.025, 0.025),
-                text_align=p3d.TextNode.ALeft,
-                pos=(-0.15, 0, -0.05)
-            )
 
             frame.attacklabel = dgui.DirectLabel(
                 parent=frame,
                 text='',
                 text_scale=(0.025, 0.025),
                 text_align=p3d.TextNode.ALeft,
-                pos=(0.05, 0, -0.05),
+                pos=(-0.175, 0, -0.05),
             )
 
         return frame
@@ -214,7 +199,6 @@ class CombatUI(GameUI):
             ui.label['text'] = combatant.name
             ui.hpbar['value'] = int(combatant.hp_current / combatant.hp_max * 100)
             ui.hpbar['text'] = '{}/{}'.format(int(combatant.hp_current), combatant.hp_max)
-            ui.rolelabel['text'] = 'ROLE: {}'.format(combatant.role)
             ui.attacklabel['text'] = 'ATK: {}'.format(combatant.attack)
 
         for combatant in enemy_combatants:
@@ -222,7 +206,6 @@ class CombatUI(GameUI):
             ui.label['text'] = combatant.name
             ui.hpbar['value'] = int(combatant.hp_current / combatant.hp_max * 100)
             ui.hpbar['text'] = '{}/{}'.format(int(combatant.hp_current), combatant.hp_max)
-            ui.rolelabel['text'] = 'ROLE: {}'.format(combatant.role)
             ui.attacklabel['text'] = 'ATK: {}'.format(combatant.attack)
 
 
