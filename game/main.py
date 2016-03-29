@@ -16,7 +16,7 @@ import gamestates
 p3d.load_prc_file_data(
     '',
     'model-path {}\n'.format('assets') + \
-    'framebuffer-srgb true\n'
+    'textures-power-2 none\n'
 )
 
 
