@@ -1,6 +1,6 @@
 [general]
 name = Hydrogen
-render_plugin = 
+render_plugin = game/rendermanager.py
 
 [build]
 asset_dir = assets/
