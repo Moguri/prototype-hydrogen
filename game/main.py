@@ -41,7 +41,7 @@ class GameApp(ShowBase):
         self.inputmapper = InputMapper('config/input.conf')
 
         self.current_state = None
-        self.change_state(gamestates.CombatState)
+        self.change_state(gamestates.TitleState)
 
         def run_state(task):
             if self.current_state:
