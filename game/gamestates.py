@@ -94,6 +94,8 @@ class TitleState(GameState):
 
         self.options = [
             "New Game",
+            "Load Game",
+            "Options",
             "Exit",
         ]
 
@@ -102,6 +104,11 @@ class TitleState(GameState):
     def do_selection(self, option):
         if option == "New Game":
             base.change_state(MainState)
+        elif option == "Load Game":
+            print("Loading not implemented, starting new game")
+            base.change_state(MainState)
+        elif option == "Options":
+            print("Options not implemented")
         elif option == "Exit":
             sys.exit()
 
