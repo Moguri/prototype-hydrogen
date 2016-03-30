@@ -55,7 +55,7 @@ class TitleUI(GameUI):
 
         dgui.DirectFrame(
             parent=self.root_full,
-            frameColor=(0.8, 0.8, 0.8, 0.8),
+            image='landscape.png',
             frameSize=(-1.0, 1.0, -1.0, 1.0)
         )
 
@@ -92,14 +92,14 @@ class TitleState(GameState):
     def __init__(self):
         super().__init__(TitleUI)
 
-        self.options = [
+        options = [
             "New Game",
             "Load Game",
             "Options",
             "Exit",
         ]
 
-        self.ui.setup_selections(self.options, self.do_selection)
+        self.ui.setup_selections(options, self.do_selection)
 
     def do_selection(self, option):
         if option == "New Game":
