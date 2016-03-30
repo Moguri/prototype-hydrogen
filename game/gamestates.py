@@ -116,14 +116,58 @@ class TitleState(GameState):
 class MainUI(GameUI):
     def __init__(self):
         super().__init__()
+        self._selection_items = []
+
+        dgui.DirectFrame(
+            parent=self.root_full,
+            frameColor=(0.8, 0.8, 0.8, 0.8),
+            frameSize=(-1.0, 1.0, -1.0, 1.0)
+        )
+
+    def setup_selections(self, selections, select_cb):
+        for i in self._selection_items:
+            i.destroy()
+        self._selection_items = []
+
+        for idx, selection in enumerate(selections):
+            btn = dgui.DirectButton(
+                parent=self.root_left,
+                command=select_cb,
+                extraArgs=[selection],
+                text=selection,
+                text_scale=(0.05, 0.05),
+                text_pos=(0, -0.02),
+                relief=dgui.DGG.FLAT,
+                frameColor=(0.3, 0.3, 0.3, 0.5),
+                frameSize=(-0.25, 0.25, -0.04, 0.04),
+                pos=(0.2, 0, 0.3 - 0.15 * idx)
+            )
+            self._selection_items.append(btn)
 
 
 class MainState(GameState):
     def __init__(self):
         super().__init__(MainUI)
 
-    def run(self, dt):
-        base.change_state(CombatState)
+        options = [
+            "Start Combat",
+            "Enter Shop",
+            "Mech Status",
+            "Save",
+            "Load",
+            "Options",
+            "Exit",
+        ]
+
+        self.ui.setup_selections(options, self.do_selection)
+
+    def do_selection(self, option):
+        if option == "Start Combat":
+            base.change_state(CombatState)
+        elif option == "Exit":
+            sys.exit()
+        else:
+            print("Not implemented: {}".format(option))
 
 
 class ShopUI(GameUI):
