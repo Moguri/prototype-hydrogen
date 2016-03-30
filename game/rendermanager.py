@@ -3,7 +3,7 @@ from direct.filter.FilterManager import FilterManager
 from direct.filter.CommonFilters import CommonFilters
 
 pbr_vert = """
-#version 330
+#version 130
 
 uniform mat4 p3d_ModelViewProjectionMatrix;
 uniform mat4 p3d_ModelViewMatrix;
@@ -27,7 +27,7 @@ void main() {
 """
 
 pbr_frag = """
-#version 330
+#version 130
 
 uniform sampler2D p3d_Texture0;
 
@@ -99,7 +99,7 @@ void main() {
 """
 
 hdr_vert = """
-#version 330
+#version 130
 
 uniform mat4 p3d_ModelViewProjectionMatrix;
 
@@ -116,7 +116,7 @@ void main() {
 
 # GLSL version of Uncharted 2 operator taken from http://filmicgames.com/archives/75
 hdr_frag = """
-#version 330
+#version 130
 
 uniform sampler2D tex;
 
