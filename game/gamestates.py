@@ -132,7 +132,6 @@ class TitleState(GameState):
         options = [
             "New Game",
             "Load Game",
-            "Options",
             "Exit",
         ]
 
@@ -198,7 +197,6 @@ class MainState(GameState):
             "Mech Status",
             "Save",
             "Load",
-            "Options",
             "Exit",
         ]
 
