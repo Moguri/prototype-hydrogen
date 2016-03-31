@@ -211,6 +211,8 @@ class MainState(GameState):
     def do_selection(self, option):
         if option == "Start Combat":
             base.change_state(CombatState)
+        elif option == "Enter Shop":
+            base.change_state(ShopState)
         elif option == "Save":
             print("Saving to default.sav")
             base.save_data.write('default.sav')
@@ -235,6 +237,12 @@ class ShopUI(GameUI):
 class ShopState(GameState):
     def __init__(self):
         super().__init__(ShopUI)
+
+        print("Entering shop")
+
+    def run(self, dt):
+        print("Leaving shop")
+        base.change_state(MainState)
 
 
 class CombatUI(GameUI):
