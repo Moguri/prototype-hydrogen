@@ -1,4 +1,5 @@
 from collections import OrderedDict
+import os
 import json
 import random
 import sys
@@ -139,9 +140,15 @@ class TitleState(GameState):
 
     def do_selection(self, option):
         if option == "New Game":
+            base.save_data = SaveData()
             base.change_state(MainState)
         elif option == "Load Game":
-            print("Loading not implemented, starting new game")
+            if os.path.exists('default.sav'):
+                print("Loading save data from", "default.sav")
+                base.save_data = SaveData.from_file('default.sav')
+            else:
+                print("Could not find save file, creating a new save")
+                base.save_data = SaveData()
             base.change_state(MainState)
         elif option == "Options":
             print("Options not implemented")
@@ -195,11 +202,25 @@ class MainState(GameState):
             "Exit",
         ]
 
+        if base.save_data is None:
+            print("Warning: No save data in main state, using random mechs")
+            base.save_data = SaveData()
+
         self.ui.setup_selections(options, self.do_selection)
 
     def do_selection(self, option):
         if option == "Start Combat":
             base.change_state(CombatState)
+        elif option == "Save":
+            print("Saving to default.sav")
+            base.save_data.write('default.sav')
+        elif option == "Load":
+            if os.path.exists('default.sav'):
+                print("Loading save data from", "default.sav")
+                base.save_data = SaveData.from_file('default.sav')
+            else:
+                print("Could not find save file, creating a new save")
+                base.save_data = SaveData()
         elif option == "Exit":
             sys.exit()
         else:
