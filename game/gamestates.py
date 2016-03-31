@@ -484,7 +484,8 @@ class CombatState(GameState):
             self.selected_targets = True
 
         if self.combat_sys.is_over:
-                print('Combat is over')
+            base.change_state(MainState)
+            return
         elif self.formation_idx != -1 and self.selected_formation == None:
             self.selected_formation = self.formations[self.formation_idx]
             for player, role in zip(self.combat_sys.player_list, self.selected_formation):
