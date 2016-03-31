@@ -1,10 +1,46 @@
 from collections import OrderedDict
+import json
 import random
 import sys
 
 from direct.showbase.DirectObject import DirectObject
 import direct.gui.DirectGui as dgui
 import panda3d.core as p3d
+
+
+class SaveData:
+    def __init__(self):
+        names = ('Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon')
+        self.mechs = [Character.from_random() for i in range(3)]
+        for i, character in enumerate(self.mechs):
+            character.name = names[i%len(names)]
+
+    def serialize(self):
+        d = {
+            'mechs': [mech.serialize() for mech in self.mechs],
+        }
+
+        return d
+
+    def deserialize(self, d):
+        for key, value in d.items():
+            if key == 'mechs':
+                self.mechs = [Character.from_dictionary(i) for i in value]
+            else:
+                print("Warning: Unknown field to deserialize into SaveData: {}".format(key))
+
+    def write(self, fpath):
+        with open(fpath, 'w') as f:
+            json.dump(self.serialize(), f)
+
+    @classmethod
+    def from_file(cls, fpath):
+        sd = cls()
+
+        with open(fpath) as f:
+            sd.deserialize(json.load(f))
+
+        return sd
 
 
 class GameUI:
@@ -358,10 +394,13 @@ class CombatState(GameState):
         self.selected_formation = None
         self.selected_targets = False
 
-        names = ('Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon')
-        self.player_characters = [Character.from_random() for i in range(3)]
-        for i, character in enumerate(self.player_characters):
-            character.name = names[i%len(names)]
+        if base.save_data is None:
+            print("Warning: No save data in combat state, using random mechs")
+            save_data = SaveData()
+        else:
+            save_data = base.save_data
+
+        self.player_characters = save_data.mechs
 
         self.formations = []
         self.formation_idx = -1

@@ -31,15 +31,35 @@ TEMPLATES = {
     },
 }
 class Character:
+    _serialize_fields = [
+        'name',
+        'health',
+        'attack',
+        'roles'
+    ]
+
     def __init__(self):
         self.name = 'default'
         self.health = 3
         self.attack = 3
         self.roles = []
 
+    def serialize(self):
+        d = {field: getattr(self, field) for field in self._serialize_fields}
+
+        return d
+
+    def deserialize(self, d):
+        for key, value in d.items():
+            if key in self._serialize_fields:
+                setattr(self, key, value)
+            else:
+                print("Warning: Unknown field to deserialize into Character: {}".format(key))
+
+
     @classmethod
     def from_random(cls):
-        result = Character()
+        result = cls()
         result.name = 'Random'
 
         stat_dist = [random.random() for i in range(2)]
@@ -58,9 +78,16 @@ class Character:
     def from_template(cls, template_name):
         template = TEMPLATES[template_name]
 
-        result = Character()
+        result = cls()
         for key, value in template.items():
             setattr(result, key, value)
         result.roles.append('Monster')
+
+        return result
+
+    @classmethod
+    def from_dictionary(cls, d):
+        result = cls()
+        result.deserialize(d)
 
         return result
