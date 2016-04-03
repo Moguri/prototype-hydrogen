@@ -160,6 +160,9 @@ class MainUI(GameUI):
         super().__init__()
         self._selection_items = []
 
+        self._mech_frames = []
+        self._back_btn = None
+
         dgui.DirectFrame(
             parent=self.root_full,
             frameColor=(0.8, 0.8, 0.8, 0.8),
@@ -186,12 +189,81 @@ class MainUI(GameUI):
             )
             self._selection_items.append(btn)
 
+    def setup_status(self, mechs, back_cb=None, back_args=[]):
+        for i in self._mech_frames:
+            i.destroy()
+        self._mech_frames = []
+
+        if self._back_btn:
+            self._back_btn.destroy()
+
+        for idx, mech in enumerate(mechs):
+            frame = dgui.DirectFrame(
+                parent=self.root,
+                frameColor=(0.3, 0.3, 0.3, 0.5),
+                frameSize=(-0.9, 0.9, -0.20, 0.20),
+                pos=(0.0, 0.0, 0.70 - 0.50 * idx)
+            )
+
+            frame.label = dgui.DirectLabel(
+                parent=frame,
+                text=mech.name,
+                text_scale=(0.04, 0.04),
+                text_align=p3d.TextNode.ALeft,
+                frameColor=(0, 0, 0, 0),
+                pos=(-0.85, 0, 0.15)
+            )
+
+            frame.hp = dgui.DirectLabel(
+                parent=frame,
+                text="HP: {}".format(mech.health),
+                text_scale=(0.04, 0.04),
+                text_align=p3d.TextNode.ALeft,
+                frameColor=(0, 0, 0, 0),
+                pos=(-0.80, 0, 0.05)
+            )
+
+            frame.attack = dgui.DirectLabel(
+                parent=frame,
+                text="ATK: {}".format(mech.health),
+                text_scale=(0.04, 0.04),
+                text_align=p3d.TextNode.ALeft,
+                frameColor=(0, 0, 0, 0),
+                pos=(-0.30, 0, 0.05)
+            )
+
+            frame.roles = dgui.DirectLabel(
+                parent=frame,
+                text="Roles: {}".format(', '.join(mech.roles)),
+                text_scale=(0.04, 0.04),
+                text_align=p3d.TextNode.ALeft,
+                frameColor=(0, 0, 0, 0),
+                pos=(-0.80, 0, -0.05)
+            )
+
+            self._mech_frames.append(frame)
+
+        if back_cb:
+            self._back_btn = dgui.DirectButton(
+                parent=self.root,
+                command=back_cb,
+                extraArgs=back_args,
+                text='Back',
+                text_scale=(0.05, 0.05),
+                text_pos=(0, -0.02),
+                relief=dgui.DGG.FLAT,
+                frameColor=(0.3, 0.3, 0.3, 0.5),
+                frameSize=(-0.25, 0.25, -0.04, 0.04),
+                pos=(-0.2, 0, -0.9)
+            )
+
+
 
 class MainState(GameState):
     def __init__(self):
         super().__init__(MainUI)
 
-        options = [
+        self.options = [
             "Start Combat",
             "Enter Shop",
             "Mech Status",
@@ -200,17 +272,33 @@ class MainState(GameState):
             "Exit",
         ]
 
+        self.substate = None
+        self.change_substate('main')
+
         if base.save_data is None:
             print("Warning: No save data in main state, using random mechs")
             base.save_data = SaveData()
 
-        self.ui.setup_selections(options, self.do_selection)
+    def change_substate(self, substate):
+        if substate == self.substate:
+            return
+
+        self.substate = substate
+
+        if self.substate == 'main':
+            self.ui.setup_selections(self.options, self.do_selection)
+            self.ui.setup_status([])
+        elif self.substate == 'status':
+            self.ui.setup_selections([], None)
+            self.ui.setup_status(base.save_data.mechs, self.change_substate, ['main'])
 
     def do_selection(self, option):
         if option == "Start Combat":
             base.change_state(CombatState)
         elif option == "Enter Shop":
             base.change_state(ShopState)
+        elif option == "Mech Status":
+            self.change_substate('status')
         elif option == "Save":
             print("Saving to default.sav")
             base.save_data.write('default.sav')
