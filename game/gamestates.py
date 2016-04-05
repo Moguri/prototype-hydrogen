@@ -5,7 +5,7 @@ import random
 import sys
 
 from direct.showbase.DirectObject import DirectObject
-import direct.gui.DirectGui as dgui
+import gui
 import panda3d.core as p3d
 
 
@@ -54,13 +54,21 @@ class GameUI:
 
     def __init__(self):
         for idx,root in enumerate(self._roots):
-            setattr(self, root[0], dgui.DirectFrame(
+            setattr(self, root[0], gui.Frame(
                 parent=getattr(base, root[1]),
-                #frameColor=(0.2 * (idx+1), 0, 0, 0.5),
-                frameColor=(0, 0, 0, 0),
-                frameSize=(-1, 1, -1, 1),
+                #frame_color=(0.2 * (idx+1), 0, 0, 0.5),
+                frame_color=(0, 0, 0, 0),
+                frame_size=(-1, 1, -1, 1),
                 pos=(0, 0, 0)
             ))
+
+        gui.global_theme = gui.Theme()
+        gui.global_theme.props = {
+            'title_bg': {
+                'image': 'landscape.png',
+                'frame_size': (-1.0, 1.0, -1.0, 1.0),
+            }
+        }
 
     def cleanup(self):
         for root in self._roots:
@@ -90,17 +98,16 @@ class TitleUI(GameUI):
         super().__init__()
         self._selection_items = []
 
-        dgui.DirectFrame(
+        gui.Frame(
             parent=self.root_full,
             image='landscape.png',
-            frameSize=(-1.0, 1.0, -1.0, 1.0)
         )
 
-        dgui.DirectLabel(
+        gui.Label(
             parent=self.root,
             text='Prototype Hydrogen',
             text_scale=(0.15, 0.15),
-            frameColor=(0, 0, 0, 0),
+            frame_color=(0, 0, 0, 0),
             pos=(0.0, 0.0, 0.8)
         )
 
@@ -110,16 +117,16 @@ class TitleUI(GameUI):
         self._selection_items = []
 
         for idx, selection in enumerate(selections):
-            btn = dgui.DirectButton(
+            btn = gui.Button(
                 parent=self.root,
                 command=select_cb,
-                extraArgs=[selection],
+                extra_args=[selection],
                 text=selection,
                 text_scale=(0.05, 0.05),
                 text_pos=(0, -0.02),
-                relief=dgui.DGG.FLAT,
-                frameColor=(0.3, 0.3, 0.3, 0.5),
-                frameSize=(-0.25, 0.25, -0.04, 0.04),
+                relief=gui.DGG.FLAT,
+                frame_color=(0.3, 0.3, 0.3, 0.5),
+                frame_size=(-0.25, 0.25, -0.04, 0.04),
                 pos=(0, 0, 0.4 - 0.15 * idx)
             )
             self._selection_items.append(btn)
@@ -163,10 +170,10 @@ class MainUI(GameUI):
         self._mech_frames = []
         self._back_btn = None
 
-        dgui.DirectFrame(
+        gui.Frame(
             parent=self.root_full,
-            frameColor=(0.8, 0.8, 0.8, 0.8),
-            frameSize=(-1.0, 1.0, -1.0, 1.0)
+            frame_color=(0.8, 0.8, 0.8, 0.8),
+            frame_size=(-1.0, 1.0, -1.0, 1.0)
         )
 
     def setup_selections(self, selections, select_cb):
@@ -175,16 +182,16 @@ class MainUI(GameUI):
         self._selection_items = []
 
         for idx, selection in enumerate(selections):
-            btn = dgui.DirectButton(
+            btn = gui.Button(
                 parent=self.root_left,
                 command=select_cb,
-                extraArgs=[selection],
+                extra_args=[selection],
                 text=selection,
                 text_scale=(0.05, 0.05),
                 text_pos=(0, -0.02),
-                relief=dgui.DGG.FLAT,
-                frameColor=(0.3, 0.3, 0.3, 0.5),
-                frameSize=(-0.25, 0.25, -0.04, 0.04),
+                relief=gui.DGG.FLAT,
+                frame_color=(0.3, 0.3, 0.3, 0.5),
+                frame_size=(-0.25, 0.25, -0.04, 0.04),
                 pos=(0.2, 0, 0.3 - 0.15 * idx)
             )
             self._selection_items.append(btn)
@@ -198,62 +205,62 @@ class MainUI(GameUI):
             self._back_btn.destroy()
 
         for idx, mech in enumerate(mechs):
-            frame = dgui.DirectFrame(
+            frame = gui.Frame(
                 parent=self.root,
-                frameColor=(0.3, 0.3, 0.3, 0.5),
-                frameSize=(-0.9, 0.9, -0.20, 0.20),
+                frame_color=(0.3, 0.3, 0.3, 0.5),
+                frame_size=(-0.9, 0.9, -0.20, 0.20),
                 pos=(0.0, 0.0, 0.70 - 0.50 * idx)
             )
 
-            frame.label = dgui.DirectLabel(
+            frame.label = gui.Label(
                 parent=frame,
                 text=mech.name,
                 text_scale=(0.04, 0.04),
                 text_align=p3d.TextNode.ALeft,
-                frameColor=(0, 0, 0, 0),
+                frame_color=(0, 0, 0, 0),
                 pos=(-0.85, 0, 0.15)
             )
 
-            frame.hp = dgui.DirectLabel(
+            frame.hp = gui.Label(
                 parent=frame,
                 text="HP: {}".format(mech.health),
                 text_scale=(0.04, 0.04),
                 text_align=p3d.TextNode.ALeft,
-                frameColor=(0, 0, 0, 0),
+                frame_color=(0, 0, 0, 0),
                 pos=(-0.80, 0, 0.05)
             )
 
-            frame.attack = dgui.DirectLabel(
+            frame.attack = gui.Label(
                 parent=frame,
                 text="ATK: {}".format(mech.health),
                 text_scale=(0.04, 0.04),
                 text_align=p3d.TextNode.ALeft,
-                frameColor=(0, 0, 0, 0),
+                frame_color=(0, 0, 0, 0),
                 pos=(-0.30, 0, 0.05)
             )
 
-            frame.roles = dgui.DirectLabel(
+            frame.roles = gui.Label(
                 parent=frame,
                 text="Roles: {}".format(', '.join(mech.roles)),
                 text_scale=(0.04, 0.04),
                 text_align=p3d.TextNode.ALeft,
-                frameColor=(0, 0, 0, 0),
+                frame_color=(0, 0, 0, 0),
                 pos=(-0.80, 0, -0.05)
             )
 
             self._mech_frames.append(frame)
 
         if back_cb:
-            self._back_btn = dgui.DirectButton(
+            self._back_btn = gui.Button(
                 parent=self.root,
                 command=back_cb,
-                extraArgs=back_args,
+                extra_args=back_args,
                 text='Back',
                 text_scale=(0.05, 0.05),
                 text_pos=(0, -0.02),
-                relief=dgui.DGG.FLAT,
-                frameColor=(0.3, 0.3, 0.3, 0.5),
-                frameSize=(-0.25, 0.25, -0.04, 0.04),
+                relief=gui.DGG.FLAT,
+                frame_color=(0.3, 0.3, 0.3, 0.5),
+                frame_size=(-0.25, 0.25, -0.04, 0.04),
                 pos=(-0.2, 0, -0.9)
             )
 
@@ -342,23 +349,23 @@ class CombatUI(GameUI):
         self._selection_items = []
 
     def _create_pc_frame(self, n):
-        frame = dgui.DirectFrame(
+        frame = gui.Frame(
             parent=self.root_right,
-            frameColor=(0.8, 0.8, 0.8, 0.5),
-            frameSize=(-0.4, 0.4, -0.075, 0.075),
+            frame_color=(0.8, 0.8, 0.8, 0.5),
+            frame_size=(-0.4, 0.4, -0.075, 0.075),
             pos=(-0.45 - 0.05 * n, 0, -0.55 - 0.175 * n)
         )
 
-        frame.label = dgui.DirectLabel(
+        frame.label = gui.Label(
             parent=frame,
             text='',
             text_scale=(0.04, 0.04),
             text_align=p3d.TextNode.ALeft,
-            frameColor=(0, 0, 0, 0),
+            frame_color=(0, 0, 0, 0),
             pos=(-0.375, 0, 0.04)
         )
 
-        frame.hpbar = dgui.DirectWaitBar(
+        frame.hpbar = gui.WaitBar(
             parent=frame,
             value=100,
             text='0/0',
@@ -366,11 +373,11 @@ class CombatUI(GameUI):
             text_pos=(0, -0.01),
             text_fg=(1, 1, 1, 1),
             text_shadow=(0, 0, 0, 0.8),
-            frameColor=(0, 0, 0, 1),
-            frameSize=(-0.35, 0.35, -0.015, 0.015),
+            frame_color=(0, 0, 0, 1),
+            frame_size=(-0.35, 0.35, -0.015, 0.015),
         )
 
-        frame.attacklabel = dgui.DirectLabel(
+        frame.attacklabel = gui.Label(
             parent=frame,
             text='',
             text_scale=(0.03, 0.03),
@@ -384,24 +391,24 @@ class CombatUI(GameUI):
         frame_per_column = 12
         col = n // frame_per_column
         row = n % frame_per_column
-        frame = dgui.DirectFrame(
+        frame = gui.Frame(
             parent=self.root_left,
-            frameColor=(0.8, 0.8, 0.8, 0.5),
-            frameSize=(-0.2, 0.2, -0.08, 0.08),
+            frame_color=(0.8, 0.8, 0.8, 0.5),
+            frame_size=(-0.2, 0.2, -0.08, 0.08),
             pos=(0.215 + 0.405 * col, 0, -1.075 + 0.167 * frame_per_column - 0.167 * row)
         )
 
         if not empty:
-            frame.label = dgui.DirectLabel(
+            frame.label = gui.Label(
                 parent=frame,
                 text='',
                 text_scale=(0.035, 0.035),
                 text_align=p3d.TextNode.ALeft,
-                frameColor=(0, 0, 0, 0),
+                frame_color=(0, 0, 0, 0),
                 pos=(-0.175, 0, 0.025)
             )
 
-            frame.hpbar = dgui.DirectWaitBar(
+            frame.hpbar = gui.WaitBar(
                 parent=frame,
                 value=100,
                 text='0/0',
@@ -409,12 +416,12 @@ class CombatUI(GameUI):
                 text_pos=(0, -0.006),
                 text_fg=(1, 1, 1, 1),
                 text_shadow=(0, 0, 0, 0.8),
-                frameColor=(0, 0, 0, 1),
-                frameSize=(-0.15, 0.15, -0.01, 0.01),
+                frame_color=(0, 0, 0, 1),
+                frame_size=(-0.15, 0.15, -0.01, 0.01),
             )
 
 
-            frame.attacklabel = dgui.DirectLabel(
+            frame.attacklabel = gui.Label(
                 parent=frame,
                 text='',
                 text_scale=(0.025, 0.025),
@@ -446,32 +453,32 @@ class CombatUI(GameUI):
         num_items = len(selections)
         frame_size = num_items / 10.0 + 0.06
 
-        self._selection_frame = dgui.DirectFrame(
+        self._selection_frame = gui.Frame(
             parent=self.root,
-            frameColor=(0.8, 0.8, 0.8, 0.5),
-            frameSize=(-0.25, 0.25, 0.0, frame_size),
+            frame_color=(0.8, 0.8, 0.8, 0.5),
+            frame_size=(-0.25, 0.25, 0.0, frame_size),
             pos=(0, 0, -1.0)
         )
 
-        dgui.DirectLabel(
+        gui.Label(
             parent=self._selection_frame,
             text=title,
             text_scale=(0.05, 0.05),
-            frameColor=(0, 0, 0, 0),
+            frame_color=(0, 0, 0, 0),
             pos=(0, 0, frame_size)
         )
 
         for idx, selection in enumerate(selections):
-            btn = dgui.DirectButton(
+            btn = gui.Button(
                 parent=self.root,
                 command=select_cb,
-                extraArgs=[idx],
+                extra_args=[idx],
                 text=selection,
                 text_scale=(0.03, 0.03),
                 text_pos=(0, -0.01),
-                relief=dgui.DGG.FLAT,
-                frameColor=(0.3, 0.3, 0.3, 0.5),
-                frameSize=(-0.25, 0.25, -0.04, 0.04),
+                relief=gui.DGG.FLAT,
+                frame_color=(0.3, 0.3, 0.3, 0.5),
+                frame_size=(-0.25, 0.25, -0.04, 0.04),
                 pos=(0, 0, (0.1 * num_items - 1.02) - 0.1 * idx)
             )
             self._selection_items.append(btn)
@@ -479,17 +486,17 @@ class CombatUI(GameUI):
     def update_combatants(self, player_combatants, enemy_combatants):
         for combatant in player_combatants:
             ui = self._pcs[combatant]
-            ui.label['text'] = combatant.name
-            ui.hpbar['value'] = int(combatant.hp_current / combatant.hp_max * 100)
-            ui.hpbar['text'] = '{}/{}'.format(int(combatant.hp_current), combatant.hp_max)
-            ui.attacklabel['text'] = 'ATK: {}'.format(combatant.attack)
+            ui.label.text = combatant.name
+            ui.hpbar.value = int(combatant.hp_current / combatant.hp_max * 100)
+            ui.hpbar.text = '{}/{}'.format(int(combatant.hp_current), combatant.hp_max)
+            ui.attacklabel.text = 'ATK: {}'.format(combatant.attack)
 
         for combatant in enemy_combatants:
             ui = self._ecs[combatant]
-            ui.label['text'] = combatant.name
-            ui.hpbar['value'] = int(combatant.hp_current / combatant.hp_max * 100)
-            ui.hpbar['text'] = '{}/{}'.format(int(combatant.hp_current), combatant.hp_max)
-            ui.attacklabel['text'] = 'ATK: {}'.format(combatant.attack)
+            ui.label.text = combatant.name
+            ui.hpbar.value = int(combatant.hp_current / combatant.hp_max * 100)
+            ui.hpbar.text = '{}/{}'.format(int(combatant.hp_current), combatant.hp_max)
+            ui.attacklabel.text = 'ATK: {}'.format(combatant.attack)
 
 
 from character import Character
