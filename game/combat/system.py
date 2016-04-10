@@ -60,7 +60,7 @@ class System:
     def act_support(self, actor, targets):
         results = []
         if actor.hp_current > 0:
-            damage = max(1, actor.attack // 6)
+            damage = max(1, actor.attack // 3)
             for target in targets:
                 target.hp_current += damage
                 results.append('{} heals {} points of damage to {}'.format(actor.name, damage, target.name))
