@@ -35,6 +35,10 @@ class Combatant:
     def roles(self):
         return self._character.roles
 
+    @property
+    def position(self):
+        return self._character.position
+
 
 class System:
     def act_single(self, actor, targets):
@@ -99,8 +103,12 @@ class System:
                     targets = [player.target]
                 else:
                     targets = [random.choice(remaining_enemies)]
-            if role == 'Support':
+            elif role == 'Support':
                 targets = self.player_list
+            elif role == 'AoE':
+                targets = [e for e in remaining_enemies if e.position == 'FRONT']
+                if not targets:
+                    targets = remaining_enemies
             action = getattr(self, 'act_' + role.lower())
             actions.append((action, (player, targets)))
         for enemy in self.enemy_list:

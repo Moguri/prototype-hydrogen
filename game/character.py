@@ -13,21 +13,25 @@ TEMPLATES = {
         'name': 'Swarmer',
         'health': 3,
         'attack': 3,
+        'position': 'BACK',
     },
     'heavy': {
         'name': 'Heavy',
         'health': 12,
         'attack': 12,
+        'position': 'FRONT',
     },
     'skirmisher': {
         'name': 'Skirmisher',
         'health': 3,
         'attack': 12,
+        'position': 'BACK',
     },
     'tank': {
         'name': 'Tank',
         'health': 12,
         'attack': 3,
+        'position': 'FRONT',
     },
 }
 class Character:
@@ -35,7 +39,8 @@ class Character:
         'name',
         'health',
         'attack',
-        'roles'
+        'roles',
+        'position'
     ]
 
     def __init__(self):
@@ -43,6 +48,7 @@ class Character:
         self.health = 3
         self.attack = 3
         self.roles = []
+        self.position = 'FRONT'
 
     def serialize(self):
         d = {field: getattr(self, field) for field in self._serialize_fields}
