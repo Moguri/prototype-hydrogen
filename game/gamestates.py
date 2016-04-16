@@ -131,7 +131,7 @@ class TitleState(GameState):
 
         options = [
             "New Game",
-            "Load Game",
+            "Continue",
             "Exit",
         ]
 
@@ -141,7 +141,7 @@ class TitleState(GameState):
         if option == "New Game":
             base.save_data = SaveData()
             base.change_state(MainState)
-        elif option == "Load Game":
+        elif option == "Continue":
             if os.path.exists('default.sav'):
                 print("Loading save data from", "default.sav")
                 base.save_data = SaveData.from_file('default.sav')
