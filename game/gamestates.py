@@ -100,9 +100,8 @@ class TitleUI(GameUI):
 
         gui.Label(
             parent=self.root,
+            style='text_title',
             text='Prototype Hydrogen',
-            text_scale=(0.15, 0.15),
-            frame_color=(0, 0, 0, 0),
             pos=(0.0, 0.0, 0.8)
         )
 
@@ -114,13 +113,10 @@ class TitleUI(GameUI):
         for idx, selection in enumerate(selections):
             btn = gui.Button(
                 parent=self.root,
+                style='button_general',
                 command=select_cb,
                 extra_args=[selection],
                 text=selection,
-                text_scale=(0.05, 0.05),
-                text_pos=(0, -0.02),
-                relief=gui.DGG.FLAT,
-                frame_color=(0.3, 0.3, 0.3, 0.5),
                 frame_size=(-0.25, 0.25, -0.04, 0.04),
                 pos=(0, 0, 0.4 - 0.15 * idx)
             )
@@ -179,13 +175,10 @@ class MainUI(GameUI):
         for idx, selection in enumerate(selections):
             btn = gui.Button(
                 parent=self.root_left,
+                style='button_general',
                 command=select_cb,
                 extra_args=[selection],
                 text=selection,
-                text_scale=(0.05, 0.05),
-                text_pos=(0, -0.02),
-                relief=gui.DGG.FLAT,
-                frame_color=(0.3, 0.3, 0.3, 0.5),
                 frame_size=(-0.25, 0.25, -0.04, 0.04),
                 pos=(0.2, 0, 0.3 - 0.15 * idx)
             )
@@ -209,37 +202,29 @@ class MainUI(GameUI):
 
             frame.label = gui.Label(
                 parent=frame,
+                style='text_base',
                 text=mech.name,
-                text_scale=(0.04, 0.04),
-                text_align=p3d.TextNode.ALeft,
-                frame_color=(0, 0, 0, 0),
                 pos=(-0.85, 0, 0.15)
             )
 
             frame.hp = gui.Label(
                 parent=frame,
+                style='text_base',
                 text="HP: {}".format(mech.health),
-                text_scale=(0.04, 0.04),
-                text_align=p3d.TextNode.ALeft,
-                frame_color=(0, 0, 0, 0),
                 pos=(-0.80, 0, 0.05)
             )
 
             frame.attack = gui.Label(
                 parent=frame,
+                style='text_base',
                 text="ATK: {}".format(mech.health),
-                text_scale=(0.04, 0.04),
-                text_align=p3d.TextNode.ALeft,
-                frame_color=(0, 0, 0, 0),
                 pos=(-0.30, 0, 0.05)
             )
 
             frame.roles = gui.Label(
                 parent=frame,
+                style='text_base',
                 text="Roles: {}".format(', '.join(mech.roles)),
-                text_scale=(0.04, 0.04),
-                text_align=p3d.TextNode.ALeft,
-                frame_color=(0, 0, 0, 0),
                 pos=(-0.80, 0, -0.05)
             )
 
@@ -248,13 +233,10 @@ class MainUI(GameUI):
         if back_cb:
             self._back_btn = gui.Button(
                 parent=self.root,
+                style='button_general',
                 command=back_cb,
                 extra_args=back_args,
                 text='Back',
-                text_scale=(0.05, 0.05),
-                text_pos=(0, -0.02),
-                relief=gui.DGG.FLAT,
-                frame_color=(0.3, 0.3, 0.3, 0.5),
                 frame_size=(-0.25, 0.25, -0.04, 0.04),
                 pos=(-0.2, 0, -0.9)
             )
@@ -466,13 +448,10 @@ class CombatUI(GameUI):
         for idx, selection in enumerate(selections):
             btn = gui.Button(
                 parent=self.root,
+                style='button_combat',
                 command=select_cb,
                 extra_args=[idx],
                 text=selection,
-                text_scale=(0.03, 0.03),
-                text_pos=(0, -0.01),
-                relief=gui.DGG.FLAT,
-                frame_color=(0.3, 0.3, 0.3, 0.5),
                 frame_size=(-0.25, 0.25, -0.04, 0.04),
                 pos=(0, 0, (0.1 * num_items - 1.02) - 0.1 * idx)
             )

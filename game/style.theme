@@ -1,0 +1,23 @@
+title_bg:
+    image: landscape.png
+    frame_size: [-1.0, 1.0, -1.0, 1.0]
+
+text_base: &text_base
+    frame_color: [0, 0, 0, 0]
+    text_scale: [0.04, 0.04]
+    text_align: ALeft
+
+text_title:
+    frame_color: [0, 0, 0, 0]
+    text_scale: [0.15, 0.15]
+
+button_general: &button_base
+    text_scale: [0.05, 0.05]
+    text_pos: [0, -0.02]
+    frame_color: [0.3, 0.3, 0.3, 0.5]
+    relief: flat
+
+button_combat:
+    <<: *button_base
+    text_pos: [0, -0.01]
+    text_scale: [0.03, 0.03]

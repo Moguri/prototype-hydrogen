@@ -1,5 +1,6 @@
 import yaml
 import direct.gui.DirectGui as dgui
+import panda3d.core as p3d
 
 
 DGG = dgui.DGG
@@ -94,12 +95,6 @@ class Widget(object):
             parent = parent._dgui_widget
         self._dgui_widget = dgui_widget(parent=parent)
 
-        for param in sorted(params.keys()):
-            if not hasattr(self, param):
-                raise ParameterError("Unknown parameter: {}".format(param))
-
-            setattr(self, param, params[param])
-
         if theme is None:
             theme = global_theme
 
@@ -111,13 +106,22 @@ class Widget(object):
             theme = None
 
         if theme is not None:
-            theme_params = [
-                i for i in self._direct_param_map
+            theme_params = {
+                i: theme.get_property(style, i)
+                for i in self._direct_param_map
                 if theme.has_property(style, i) and i not in params
-            ]
+            }
+        else:
+            theme_params = {}
 
-            for param in theme_params:
-                setattr(self, param, theme.get_property(style, param))
+        theme_params.update(params)
+        params = theme_params
+
+        for param in sorted(params.keys()):
+            if not hasattr(self, param):
+                raise ParameterError("Unknown parameter: {}".format(param))
+
+            setattr(self, param, params[param])
 
     def __getattr__(self, attr):
         if attr == 'pos':
@@ -147,6 +151,7 @@ class Widget(object):
             self._dgui_widget.resetFrameSize()
 
     def __setattr__(self, attr, value):
+        #print(self.__class__.__name__, attr, value, type(value))
         if attr == 'pos':
             self._dgui_widget.set_pos(value)
         elif attr == 'hpr':
@@ -154,6 +159,12 @@ class Widget(object):
         elif attr == 'parent':
             self._dgui_widget.set_parent(value)
         elif attr in self._direct_param_map:
+            if attr == 'text_scale':
+                value = tuple(value)
+            elif attr == 'text_align' and isinstance(value, str):
+                value = getattr(p3d.TextNode, value)
+            elif attr == 'relief' and isinstance(value, str):
+                value = getattr(DGG, value.upper())
             self._dgui_widget[self._direct_param_map[attr]] = value
         else:
             super().__setattr__(attr, value)
