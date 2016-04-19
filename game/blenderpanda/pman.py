@@ -1,8 +1,10 @@
-import os
 import configparser
-import subprocess
+import os
 import shutil
+import subprocess
+import sys
 import time
+from collections import OrderedDict
 
 
 class PManException(Exception):
@@ -14,20 +16,28 @@ class NoConfigError(PManException):
     pass
 
 
-_config_defaults = {
-    'general': {
-        'name': 'Game',
-        'render_plugin': '',
-    },
-    'build': {
-        'asset_dir': 'assets/',
-        'export_dir': 'game/assets/',
-    },
-    'run': {
-        'main_file': 'game/main.py',
-        'auto_build': True,
-    }
-}
+class CouldNotFindPythonError(PManException):
+    pass
+
+
+class BuildError(PManException):
+    pass
+
+
+_config_defaults = OrderedDict([
+    ('general', OrderedDict([
+        ('name', 'Game'),
+        ('render_plugin', ''),
+    ])),
+    ('build', OrderedDict([
+        ('asset_dir', 'assets/'),
+        ('export_dir', 'game/assets/'),
+    ])),
+    ('run', OrderedDict([
+        ('main_file', 'game/main.py'),
+        ('auto_build', True),
+    ])),
+])
 
 
 def get_config(startdir=None):
@@ -56,6 +66,33 @@ def get_config(startdir=None):
 
     # No config found
     raise NoConfigError("Could not find config file")
+
+
+def get_python_program(config):
+    # Always use ppython on Windows
+    if sys.platform == 'win32':
+        return 'ppython'
+
+    # Check to see if there is a version of Python that can import panda3d
+    args = [
+        'python3',
+        '-c',
+        '"import panda3d.core"',
+    ]
+    retcode = subprocess.call(args)
+
+    if retcode == 0:
+        return 'python3'
+
+    # python3 didn't work, try python2
+    args[0] = 'python2'
+    retcode = subprocess.call(args)
+
+    if retcode == 0:
+        return 'python2'
+
+    # We couldn't find a python program to run
+    raise CouldNotFindPythonError('Could not find a usable Python install')
 
 
 def write_config(config):
@@ -88,7 +125,6 @@ def create_project(projectdir):
     dirs = [
         'assets',
         'game',
-        'game/assets',
         'game/blenderpanda',
     ]
 
@@ -148,10 +184,18 @@ def build(config=None):
     if config is None:
         config = get_config()
 
+    stime = time.perf_counter()
+    print("Starting build")
+
     srcdir = get_abs_path(config, config['build']['asset_dir'])
     dstdir = get_abs_path(config, config['build']['export_dir'])
 
-    stime = time.perf_counter()
+    if not os.path.exists(srcdir):
+        raise BuildError("Could not find asset directory: {}".format(srcdir))
+
+    if not os.path.exists(dstdir):
+        print("Creating asset export directory at {}".format(dstdir))
+        os.makedirs(dstdir)
 
     print("Read assets from: {}".format(srcdir))
     print("Export them to: {}".format(dstdir))
