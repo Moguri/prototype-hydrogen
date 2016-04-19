@@ -138,6 +138,7 @@ class TitleState(GameState):
     def do_selection(self, option):
         if option == "New Game":
             base.save_data = SaveData()
+            base.auto_save = True
             base.change_state(MainState)
         elif option == "Continue":
             if os.path.exists('default.sav'):
@@ -146,6 +147,7 @@ class TitleState(GameState):
             else:
                 print("Could not find save file, creating a new save")
                 base.save_data = SaveData()
+            base.auto_save = True
             base.change_state(MainState)
         elif option == "Options":
             print("Options not implemented")
@@ -251,7 +253,6 @@ class MainState(GameState):
             "Start Combat",
             "Mech Status",
             "Save",
-            "Load",
             "Exit",
         ]
 
@@ -271,6 +272,9 @@ class MainState(GameState):
         if self.substate == 'main':
             self.ui.setup_selections(self.options, self.do_selection)
             self.ui.setup_status([])
+            if base.auto_save:
+                print("Auto saving...")
+                base.save_data.write('default.sav')
         elif self.substate == 'status':
             self.ui.setup_selections([], None)
             self.ui.setup_status(base.save_data.mechs, self.change_substate, ['main'])
@@ -283,13 +287,7 @@ class MainState(GameState):
         elif option == "Save":
             print("Saving to default.sav")
             base.save_data.write('default.sav')
-        elif option == "Load":
-            if os.path.exists('default.sav'):
-                print("Loading save data from", "default.sav")
-                base.save_data = SaveData.from_file('default.sav')
-            else:
-                print("Could not find save file, creating a new save")
-                base.save_data = SaveData()
+            base.auto_save = True
         elif option == "Exit":
             sys.exit()
         else:

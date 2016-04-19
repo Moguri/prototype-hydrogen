@@ -41,6 +41,7 @@ class GameApp(ShowBase):
         self.inputmapper = InputMapper('config/input.conf')
 
         self.save_data = None
+        self.auto_save = False
 
         self.current_state = None
         self.change_state(gamestates.TitleState)
