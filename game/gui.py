@@ -1,4 +1,4 @@
-import json
+import yaml
 import direct.gui.DirectGui as dgui
 
 
@@ -47,7 +47,9 @@ class Theme(object):
 
     @classmethod
     def from_file(cls, filepath):
-        return cls.from_dictionary(json.load(filepath))
+        print("Loading from file", filepath)
+        with open(filepath) as f:
+            return cls.from_dictionary(yaml.load(f))
 
 
 class Widget(object):

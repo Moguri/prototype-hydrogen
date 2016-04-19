@@ -62,13 +62,8 @@ class GameUI:
                 pos=(0, 0, 0)
             ))
 
-        gui.global_theme = gui.Theme()
-        gui.global_theme.props = {
-            'title_bg': {
-                'image': 'landscape.png',
-                'frame_size': (-1.0, 1.0, -1.0, 1.0),
-            }
-        }
+        if gui.global_theme is None:
+            gui.global_theme = gui.Theme.from_file('style.theme')
 
     def cleanup(self):
         for root in self._roots:
@@ -100,7 +95,7 @@ class TitleUI(GameUI):
 
         gui.Frame(
             parent=self.root_full,
-            image='landscape.png',
+            style='title_bg'
         )
 
         gui.Label(
