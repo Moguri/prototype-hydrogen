@@ -249,7 +249,6 @@ class MainState(GameState):
 
         self.options = [
             "Start Combat",
-            "Enter Shop",
             "Mech Status",
             "Save",
             "Load",
@@ -279,8 +278,6 @@ class MainState(GameState):
     def do_selection(self, option):
         if option == "Start Combat":
             base.change_state(CombatState)
-        elif option == "Enter Shop":
-            base.change_state(ShopState)
         elif option == "Mech Status":
             self.change_substate('status')
         elif option == "Save":
@@ -297,22 +294,6 @@ class MainState(GameState):
             sys.exit()
         else:
             print("Not implemented: {}".format(option))
-
-
-class ShopUI(GameUI):
-    def __init__(self):
-        super().__init__()
-
-
-class ShopState(GameState):
-    def __init__(self):
-        super().__init__(ShopUI)
-
-        print("Entering shop")
-
-    def run(self, dt):
-        print("Leaving shop")
-        base.change_state(MainState)
 
 
 class CombatUI(GameUI):
