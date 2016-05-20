@@ -8,6 +8,9 @@ from direct.showbase.DirectObject import DirectObject
 import gui
 import panda3d.core as p3d
 
+from character import Character
+import combat
+
 
 class SaveData:
     def __init__(self):
@@ -450,10 +453,6 @@ class CombatUI(GameUI):
             ui.hpbar.value = int(combatant.hp_current / combatant.hp_max * 100)
             ui.hpbar.text = '{}/{}'.format(int(combatant.hp_current), combatant.hp_max)
             ui.attacklabel.text = 'ATK: {}'.format(combatant.attack)
-
-
-from character import Character
-import combat
 
 
 class CombatState(GameState):
